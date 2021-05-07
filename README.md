@@ -8,9 +8,9 @@ Notify Slack when a GitHub Action succeeds, fails, or is cancelled. Lightweight:
 
 1. Create a [custom slack app](https://api.slack.com/apps?new_app=1) and enable its webhooks.
 2. Add the webhook url as a Github secret. Examples below assume it's named `SLACK_WEBHOOK`.
-3. Incorporate the examples below into your repo's `.github/workflows/` directory.
+3. Incorporate the example below into your repo's `.github/workflows/` directory.
 
-## Pull Request Example
+## Example Usage
 
 ```yaml
 name: CI
@@ -26,40 +26,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
       - name: Run Tests
         run: make check
-      - uses: endcrawl/github-action-slack-notify-curl@v0.1
+
+      - name: Report Status to Slack
         if: always()
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          STATUS: ${{ job.status }}
-          PR_NUMBER: ${{ github.event.number }}
-          COMMIT_SHA: ${{ github.event.after }}
+        uses: endcrawl/github-action-slack-notify-curl@master
+        with:
+          slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
 ```
 
-## Merge Example
-
-```yaml
-name: CI
-
-on:
-  push:
-    branches:
-      - master
-
-permissions:
-  actions: read
-
-jobs:
-  merge:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Run Tests
-        run: make check
-      - uses: endcrawl/github-action-slack-notify-curl@v0.1
-        if: always()
-        env:
-          SLACK_WEBHOOK: ${{ secrets.CHECKS_SLACK_WEBHOOK_URL }}
-          STATUS: ${{ job.status }}
-```
