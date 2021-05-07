@@ -1,5 +1,8 @@
-name: Github Action Slack Notifications via Curl
-description: Notify Slack when a GitHub Action succeeds, fails, or is cancelled. Lightweight: only requires curl.
+name: 'Github Action Slack Notifications via Curl'
+description: 'Notify Slack when a GitHub Action succeeds, fails, or is cancelled. Lightweight: only requires curl.'
 author: Endcrawl
 runs:
-  main: './notify-slack'
+  using: 'composite'
+  steps:
+    - run: ./notify-slack
+      shell: bash
