@@ -3,6 +3,9 @@ description: >
   'Notify Slack when a GitHub Action succeeds, fails, or is cancelled.'
   'Lightweight: only requires curl.'
 author: Endcrawl
+branding:
+  icon: bell
+  color: black
 inputs:
   slack_webhook:
     description: Webhook URL for the custom slack app you've added to your workspace.
