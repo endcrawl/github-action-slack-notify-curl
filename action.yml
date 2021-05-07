@@ -3,8 +3,17 @@ description: >
   'Notify Slack when a GitHub Action succeeds, fails, or is cancelled.'
   'Lightweight: only requires curl.'
 author: Endcrawl
+inputs:
+  slack_webhook:
+    description: Webhook URL for the custom slack app you've added to your workspace.
+    required: true
 runs:
   using: 'composite'
   steps:
     - run: $GITHUB_ACTION_PATH/notify-slack
       shell: bash
+      env:
+        SLACK_WEBHOOK: ${{ inputs.slack_webhook }}
+        STATUS: ${{ job.status }}
+        PR_NUMBER: ${{ github.event.number }}
+        COMMIT_SHA: ${{ github.event.after }}
