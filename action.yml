@@ -4,5 +4,5 @@ author: Endcrawl
 runs:
   using: 'composite'
   steps:
-    - run: ./notify-slack
+    - run: $GITHUB_ACTION_PATH/notify-slack
       shell: bash
