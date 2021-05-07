@@ -1,6 +1,12 @@
+## Github Action Slack Notifications via Curl
+
+Notify Slack when a GitHub Action succeeds, fails, or is cancelled. Lightweight: only requires `curl`. Concise notification text.
+
+![Example Slack Notification on Success](./example-slack-notification-success.png)
+
 ## Setup
 
-1. Create a [custom slack app](https://api.slack.com/apps?new_app=1) and enable its webhooks
+1. Create a [custom slack app](https://api.slack.com/apps?new_app=1) and enable its webhooks.
 2. Add the webhook url as a Github secret. Examples below assume it's named `SLACK_WEBHOOK`.
 3. Incorporate the examples below into your repo's `.github/workflows/` directory.
 
