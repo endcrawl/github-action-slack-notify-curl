@@ -48,7 +48,14 @@ STARTED=$(
   grep '^      "started_at":' |
   cut -f4 -d'"'
 )
-ELAPSED=$(( `date +%s` - `date -d "$STARTED" +%s` ))
+echo "TZ=`date '%Z %z'`" 1>&2
+echo "STARTED=$STARTED" 1>&2
+STARTED=`date -d "$STARTED" +%s`
+echo "STARTED=$STARTED" 1>&2
+NOW=`date +%s`
+echo "NOW=$NOW" 1>&2
+ELAPSED=$(( $NOW - $STARTED ))
+echo "ELAPSED=$ELAPSED" 1>&2
 LINE2="_Elapsed: ${ELAPSED}s_"
 
 curl -f -d @- -H "Content-Type: application/json" "$SLACK_WEBHOOK" <<EOSLACKJSON
