@@ -28,7 +28,6 @@ if [ -n "$PR_NUMBER" ]; then
     "$GITHUB_ACTOR"
   )
 else
-  env | sort
   LINE1=$( printf "%s _%s_ check <%s|#%s> for <%s|\`%s\`> *by %s*" \
     "$VERB" \
     "$GITHUB_JOB" \
