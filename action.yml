@@ -13,6 +13,10 @@ inputs:
   token:
     description: Token used for getting elapsed job time. Defaults to $GITHUB_TOKEN.
     default: ${{ github.token }}
+  test_results:
+    description: Optional test summary.
+  coverage_results:
+    description: Optional code coverage summary.
 runs:
   using: 'composite'
   steps:
@@ -24,3 +28,5 @@ runs:
         STATUS: ${{ job.status }}
         PR_NUMBER: ${{ github.event.number }}
         COMMIT_SHA: ${{ github.event.after }}
+        TEST_RESULTS: ${{ inputs.test_results }}
+        COVERAGE_RESULTS: ${{ inputs.coverage_results }}
