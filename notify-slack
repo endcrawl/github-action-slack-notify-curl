@@ -16,7 +16,7 @@ esac
 GITHUB_REPO_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
 
 if [ -n "$PR_NUMBER" ]; then
-  LINE1=$( printf "%s _%s_ check <%s|#%s> for <%s|\`%s\`> (<%s|*\`%s\`*>) *by %s*" \
+  TEXT=$( printf "%s _%s_ check <%s|#%s> for <%s|\`%s\`> (<%s|*\`%s\`*>) *by %s*" \
     "$VERB" \
     "$GITHUB_JOB" \
     "$GITHUB_REPO_URL/pull/$PR_NUMBER/checks?sha=$COMMIT_SHA" \
@@ -28,7 +28,7 @@ if [ -n "$PR_NUMBER" ]; then
     "$GITHUB_ACTOR"
   )
 else
-  LINE1=$( printf "%s _%s_ check <%s|#%s> for <%s|\`%s\`> *by %s*" \
+  TEXT=$( printf "%s _%s_ check <%s|#%s> for <%s|\`%s\`> *by %s*" \
     "$VERB" \
     "$GITHUB_JOB" \
     "$GITHUB_REPO_URL/actions" \
@@ -37,6 +37,13 @@ else
     "${GITHUB_SHA:0:8}" \
     "$GITHUB_ACTOR"
   )
+fi
+
+if [ -n "$TEST_RESULTS" ]; then
+  TEXT="${TEXT}\n_Tests:_ ${TEST_RESULTS}"
+fi
+if [ -n "$COVERAGE_RESULTS" ]; then
+  TEXT="${TEXT}\n_Coverage:_ ${COVERAGE_RESULTS}"
 fi
 
 STARTED=$(
@@ -48,12 +55,12 @@ STARTED=$(
   cut -f4 -d'"'
 )
 ELAPSED=$(( `date +%s` - `date -d "$STARTED" +%s` ))
-LINE2="_Elapsed: ${ELAPSED}s_"
+TEXT="${TEXT}\n_Elapsed:_ ${ELAPSED}s"
 
 curl -f -d @- -H "Content-Type: application/json" "$SLACK_WEBHOOK" <<EOSLACKJSON
 {
   "attachments": [{
-    "text": "$LINE1\n$LINE2",
+    "text": "$TEXT",
     "color": "$COLOR",
     "footer": "<$GITHUB_REPO_URL|$GITHUB_REPOSITORY>"
   }]
