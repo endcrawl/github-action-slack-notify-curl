@@ -46,13 +46,23 @@ if [ -n "$COVERAGE_RESULTS" ]; then
   TEXT="${TEXT}\n_Coverage:_ ${COVERAGE_RESULTS}"
 fi
 
-STARTED=$(
+# github actions doesn't expose current job's numeric id, so look it up
+GITHUB_JOB_ID=$(
   curl -s \
     -u "$GITHUB_ACTOR:$TOKEN" \
     -H "Accept: application/vnd.github.v3+json" \
     "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs" |
-  grep '^      "started_at":' |
-  cut -f4 -d'"'
+  # parsing json with simple unix tools is fun :/
+  sed -nEe 's/^      "(id|name)": "?([^"]*)"?,/\2/p' | tr '\n' ' ' |
+  sed -Ee 's/([0-9]+) ([^ ]+) ?/\1 \2\n/g' |
+  awk -v GITHUB_JOB="$GITHUB_JOB" '{ if ($2 == GITHUB_JOB) print $1 }'
+)
+STARTED=$(
+  curl -s \
+    -u "$GITHUB_ACTOR:$TOKEN" \
+    -H "Accept: application/vnd.github.v3+json" \
+    "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/jobs/$GITHUB_JOB_ID" |
+  sed -nEe 's/^  "started_at": "(.*)",/\1/p'
 )
 ELAPSED=$(( `date +%s` - `date -d "$STARTED" +%s` ))
 TEXT="${TEXT}\n_Elapsed:_ ${ELAPSED}s"
